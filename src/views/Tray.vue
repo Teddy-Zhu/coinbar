@@ -39,6 +39,16 @@
           <a-tab-pane :key="name" :tab="name" v-for="(value, name) in config.subscribe">
             <a-row>
               <a-col :span="22" offset="1">
+                <a-select :default-value="config.subscribe[name].type" style="width: 100%" @change="updateExchangeStatusSelect">
+                  <a-select-option :value="0">
+                    0(fetchTicker)
+                  </a-select-option>
+                  <a-select-option :value="1">
+                    1(fetchTickers)
+                  </a-select-option>
+                </a-select>
+              </a-col>
+              <a-col :span="22" offset="1">
                 <a-select mode="tags"
                           style="width: 100%"
                           :default-value="config.subscribe[name].symbols"
@@ -78,7 +88,13 @@ export default {
     this.activeExchange = Object.keys(this.config.subscribe)[0]
   },
   methods: {
-    ...mapActions(['updateSymbols', 'addExchange', 'removeExchange', 'switchStatus', 'switchExchangeStatus']),
+    ...mapActions(['updateSymbols', 'addExchange', 'removeExchange', 'switchStatus', 'switchExchangeStatus', 'updateExchangeType']),
+    updateExchangeStatusSelect (val) {
+      this.updateExchangeStatus({
+        name: this.activeExchange,
+        type: val
+      })
+    },
     updateExchangeStatus () {
       if (!this.activeExchange) {
         return

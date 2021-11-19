@@ -56,9 +56,18 @@ export default new Vuex.Store({
         return
       }
       state.config.subscribe[name].enable = !state.config.subscribe[name].enable
+    },
+    updateExchangeTypeM (state, { name, type }) {
+      if (!(name in state.config.subscribe)) {
+        return
+      }
+      state.config.subscribe[name].type = type
     }
   },
   actions: {
+    updateExchangeType ({ commit }, { name, type }) {
+      commit('updateExchangeTypeM', { name, type })
+    },
     switchExchangeStatus ({ commit }, { name }) {
       commit('switchExchangeStatusM', { name })
     },
