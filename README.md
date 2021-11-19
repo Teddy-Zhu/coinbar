@@ -4,7 +4,7 @@
 ## TODO
 - [ ] redraw ui
 - [ ] support l18n
-
+- [ ] support export & import config
 ## Project setup
 ```
 yarn
