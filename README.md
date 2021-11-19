@@ -5,6 +5,7 @@
 - [ ] redraw ui
 - [ ] support l18n
 - [ ] support export & import config
+- [ ] support proxy setting
 ## Project setup
 ```
 yarn
