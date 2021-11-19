@@ -1,9 +1,9 @@
 <template>
   <div style="overflow-x: hidden">
     <a-row type="flex" justify="space-around" align="middle" :gutter="16">
-      <a-col :span="22" offset="1" style="padding-bottom: 1em" class="control">
+      <a-col :span="22" offset="1" class="control">
         <a-button :type="config.enable?'danger':'primary'" @click="updateStatus">
-          {{config.enable?'禁用':'启用'}}
+          {{ config.enable ? '禁用' : '启用' }}
         </a-button>
         <a-button type="primary" @click="addExchangeBtn">
           新增交易所
@@ -12,6 +12,7 @@
           移除交易所
         </a-button>
       </a-col>
+      <a-col :span="24">    <a-divider /></a-col>
       <a-col :span="2" offset="1">
         <label>名称</label>
       </a-col>
@@ -31,17 +32,28 @@
           </a-select-option>
         </a-select>
       </a-col>
-      <a-col :span="24" style="padding-top: 1em">
+      <a-col :span="24">    <a-divider />
+      </a-col>
+      <a-col :span="24">
         <a-tabs v-model="activeExchange">
           <a-tab-pane :key="name" :tab="name" v-for="(value, name) in config.subscribe">
-            <a-select mode="tags"
-                      style="width: 100%"
-                      :default-value="config.subscribe[name].symbols"
-                      placeholder="请输入需要监听的Coin"
-                      @change="changeSymbols(name,$event)"
-            >
-              <a-select-option value="BTC/USDT">BTC/USDT</a-select-option>
-            </a-select>
+            <a-row>
+              <a-col :span="22" offset="1">
+                <a-select mode="tags"
+                          style="width: 100%"
+                          :default-value="config.subscribe[name].symbols"
+                          placeholder="请输入需要监听的Coin"
+                          @change="changeSymbols(name,$event)"
+                >
+                  <a-select-option value="BTC/USDT">BTC/USDT</a-select-option>
+                </a-select>
+              </a-col>
+              <a-col :span="22" offset="1">
+                <a-button :type="config.subscribe[name].enable?'danger':'primary'" @click="updateExchangeStatus">
+                  {{ config.subscribe[name].enable ? '禁用' : '启用' }}
+                </a-button>
+              </a-col>
+            </a-row>
           </a-tab-pane>
         </a-tabs>
       </a-col>
@@ -63,11 +75,20 @@ export default {
     }
   },
   created () {
+    this.activeExchange = Object.keys(this.config.subscribe)[0]
   },
   methods: {
-    ...mapActions(['updateSymbols', 'addExchange', 'removeExchange']),
+    ...mapActions(['updateSymbols', 'addExchange', 'removeExchange', 'switchStatus', 'switchExchangeStatus']),
+    updateExchangeStatus () {
+      if (!this.activeExchange) {
+        return
+      }
+      this.switchExchangeStatus({
+        name: this.activeExchange
+      })
+    },
     updateStatus () {
-
+      this.switchStatus()
     },
     removeExchangeBtn () {
       if (!this.activeExchange) {
@@ -100,7 +121,7 @@ export default {
 </script>
 
 <style type="text/css">
-.ant-col.control .ant-btn{
+.ant-col.control .ant-btn {
   margin-right: 10px;
 }
 </style>

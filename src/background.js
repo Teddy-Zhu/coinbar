@@ -80,6 +80,7 @@ async function createWindow () {
     trayMenu.tray.addListener('right-click', () => {
       app.exit()
     })
+    if (process.env.NODE_ENV !== 'production') trayMenu.window.webContents.openDevTools()
     updateCoinByExchange()
   })
 }
@@ -99,35 +100,39 @@ function getExchangeInstance (exchange) {
 async function updateCoinByExchange () {
   const allConfig = store.state.config
   const enable = allConfig.enable
-  if (!enable) {
-    return
-  }
-  const config = allConfig.subscribe
-  const msgStr = []
-  try {
-    for (const exchange in config) {
-      const exchangeConfig = config[exchange]
-      const exchangeObj = getExchangeInstance(exchange)
-      const removeSuffix = exchangeConfig.removeSuffix
-      if (exchangeConfig.type === 0) {
-        for (const i in exchangeConfig.symbols) {
-          const symbol = exchangeConfig.symbols[i]
-          const ticker = await exchangeObj.fetchTicker(symbol)
-          msgStr.push(`${removeSuffix ? symbol.split('/')[0] : symbol} ${ticker.last}`)
+  if (enable) {
+    const config = allConfig.subscribe
+    const msgStr = []
+    try {
+      for (const exchange in config) {
+        const exchangeConfig = config[exchange]
+        // console.log(`exchange: ${exchange}, config: ${JSON.stringify(exchangeConfig)}`)
+        if (!exchangeConfig.enable) {
+          continue
         }
-      } else {
-        const tickers = await exchangeObj.fetchTickers(exchangeConfig.symbols)
-        for (const ticker of tickers) {
-          msgStr.push(`${removeSuffix ? ticker.symbol.split('/')[0] : ticker.symbol} ${ticker.last}`)
+        const exchangeObj = getExchangeInstance(exchange)
+        const removeSuffix = exchangeConfig.removeSuffix
+        if (exchangeConfig.type === 0) {
+          for (const i in exchangeConfig.symbols) {
+            const symbol = exchangeConfig.symbols[i]
+            const ticker = await exchangeObj.fetchTicker(symbol)
+            msgStr.push(`${removeSuffix ? symbol.split('/')[0] : symbol} ${ticker.last}`)
+          }
+        } else {
+          const tickers = await exchangeObj.fetchTickers(exchangeConfig.symbols)
+          for (const ticker of tickers) {
+            msgStr.push(`${removeSuffix ? ticker.symbol.split('/')[0] : ticker.symbol} ${ticker.last}`)
+          }
         }
       }
+    } catch (e) {
+      console.log(e)
     }
-  } catch (e) {
-    console.log(e)
+
+    trayMenu.tray.setTitle(msgStr.join('·'))
+  } else {
+    trayMenu.tray.setTitle('plugin disabled')
   }
-
-  trayMenu.tray.setTitle(msgStr.join('·'))
-
   setTimeout(updateCoinByExchange, 10000)
 }
 

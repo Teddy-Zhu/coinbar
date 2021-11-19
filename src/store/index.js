@@ -1,20 +1,29 @@
 import Vue from 'vue'
 import Vuex from 'vuex'
 import { createPersistedState, createSharedMutations } from 'vuex-electron'
+import _ from 'lodash'
 
 Vue.use(Vuex)
 
 export default new Vuex.Store({
   state: {
+    defaultExchangeConfig: {
+      enable: true,
+      type: 0,
+      removeSuffix: true,
+      symbols: []
+    },
     config: {
       enable: true,
       subscribe: {
         binance: {
+          enable: true,
           type: 0,
           removeSuffix: true,
           symbols: []
         },
         mexc: {
+          enable: true,
           type: 0,
           removeSuffix: true,
           symbols: ['BTC/USDT', 'ICP/USDT', 'BIT/USDT', 'SWASH/USDT', 'MX/USDT']
@@ -31,21 +40,32 @@ export default new Vuex.Store({
       if (name in state.config.subscribe) {
         return
       }
-      state.config.subscribe[name] = {
-        type: 0,
-        removeSuffix: true,
-        symbols: []
-      }
+      state.config.subscribe[name] = _.cloneDeep(state.defaultExchangeConfig)
     },
     removeExchangeM (state, { name }) {
       if (!(name in state.config.subscribe)) {
         return
       }
       delete state.config.subscribe[name]
+    },
+    switchStatusM (state) {
+      state.config.enable = !state.config.enable
+    },
+    switchExchangeStatusM (state, { name }) {
+      if (!(name in state.config.subscribe)) {
+        return
+      }
+      state.config.subscribe[name].enable = !state.config.subscribe[name].enable
     }
   },
   actions: {
-    removeExchange ({ commit }, name) {
+    switchExchangeStatus ({ commit }, { name }) {
+      commit('switchExchangeStatusM', { name })
+    },
+    switchStatus ({ commit }) {
+      commit('switchStatusM')
+    },
+    removeExchange ({ commit }, { name }) {
       commit('removeExchangeM', name)
     },
     addExchange ({ commit }, { name }) {

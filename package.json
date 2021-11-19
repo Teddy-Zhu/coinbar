@@ -16,6 +16,7 @@
     "ant-design-vue": "^1.7.8",
     "ccxt": "^1.61.55",
     "core-js": "^3.6.5",
+    "lodash": "^4.17.21",
     "menubar": "^9.1.0",
     "vue": "^2.6.11",
     "vue-router": "^3.2.0",
