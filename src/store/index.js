@@ -14,6 +14,7 @@ export default new Vuex.Store({
       symbols: []
     },
     config: {
+      refresh: 10,
       enable: true,
       subscribe: {
         binance: {
@@ -62,9 +63,15 @@ export default new Vuex.Store({
         return
       }
       state.config.subscribe[name].type = type
+    },
+    updateRefreshFrequencyM (state, { time }) {
+      state.config.refresh = time
     }
   },
   actions: {
+    updateRefreshFrequency ({ commit }, { time }) {
+      commit('updateRefreshFrequencyM', { time })
+    },
     updateExchangeType ({ commit }, { name, type }) {
       commit('updateExchangeTypeM', { name, type })
     },

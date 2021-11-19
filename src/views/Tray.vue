@@ -12,6 +12,14 @@
           移除交易所
         </a-button>
       </a-col>
+      <a-col :span="24">    <a-divider>Global Setting</a-divider> </a-col>
+      <a-col :span="22" offset="1">
+        <a-form :label-col="{ span: 5 }">
+          <a-form-item label="refresh frequency">
+            <a-input-number v-model="refresh" :min="1" @change="updateRefreshFrequencyBtn" />
+          </a-form-item>
+        </a-form>
+      </a-col>
       <a-col :span="24">    <a-divider /></a-col>
       <a-col :span="2" offset="1">
         <label>名称</label>
@@ -79,6 +87,7 @@ export default {
   computed: mapState(['config']),
   data () {
     return {
+      refresh: 10,
       newExchange: '',
       newType: 0,
       activeExchange: ''
@@ -86,9 +95,16 @@ export default {
   },
   created () {
     this.activeExchange = Object.keys(this.config.subscribe)[0]
+    this.refresh = this.config.refresh
   },
   methods: {
-    ...mapActions(['updateSymbols', 'addExchange', 'removeExchange', 'switchStatus', 'switchExchangeStatus', 'updateExchangeType']),
+    ...mapActions(['updateSymbols',
+      'updateRefreshFrequency',
+      'addExchange', 'removeExchange',
+      'switchStatus', 'switchExchangeStatus', 'updateExchangeType']),
+    updateRefreshFrequencyBtn (value) {
+      this.updateRefreshFrequency({ time: value })
+    },
     updateExchangeStatusSelect (val) {
       this.updateExchangeStatus({
         name: this.activeExchange,
@@ -137,6 +153,9 @@ export default {
 </script>
 
 <style type="text/css">
+.control {
+  margin-top: 10px;
+}
 .ant-col.control .ant-btn {
   margin-right: 10px;
 }

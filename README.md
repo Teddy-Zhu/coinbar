@@ -1,4 +1,8 @@
 # coinbar
+    a simple tool for monitoring cryptocurrency prices
+
+## TODO
+- [ ] redraw ui
 
 ## Project setup
 ```
@@ -22,3 +26,10 @@ yarn lint
 
 ### Download
 See [Release Page](https://github.com/Teddy-Zhu/coinbar/releases).
+
+### screenshots
+bar
+![](screenshots/bar.png)
+
+operate
+![](screenshots/operate.png)

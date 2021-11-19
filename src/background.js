@@ -99,6 +99,7 @@ function getExchangeInstance (exchange) {
 
 async function updateCoinByExchange () {
   const allConfig = store.state.config
+  const refreshInterval = allConfig.refresh
   const enable = allConfig.enable
   if (enable) {
     const config = allConfig.subscribe
@@ -133,7 +134,7 @@ async function updateCoinByExchange () {
   } else {
     trayMenu.tray.setTitle('plugin disabled')
   }
-  setTimeout(updateCoinByExchange, 10000)
+  setTimeout(updateCoinByExchange, refreshInterval * 1000)
 }
 
 // Quit when all windows are closed.
