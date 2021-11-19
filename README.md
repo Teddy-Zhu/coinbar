@@ -3,6 +3,7 @@
 
 ## TODO
 - [ ] redraw ui
+- [ ] support l18n
 
 ## Project setup
 ```
