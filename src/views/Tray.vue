@@ -106,7 +106,7 @@ export default {
       this.updateRefreshFrequency({ time: value })
     },
     updateExchangeStatusSelect (val) {
-      this.updateExchangeStatus({
+      this.updateExchangeType({
         name: this.activeExchange,
         type: val
       })
@@ -123,14 +123,21 @@ export default {
       this.switchStatus()
     },
     removeExchangeBtn () {
+      console.log(this.activeExchange)
       if (!this.activeExchange) {
         return
       }
-      this.removeExchange({
+      this.$store.dispatchPromise('removeExchange', {
         name: this.activeExchange
+      }).then(() => {
+        this.$nextTick(() => {
+          if (Object.keys(this.config.subscribe).length > 0) {
+            this.activeExchange = Object.keys(this.config.subscribe)[0]
+          }
+        })
       })
     },
-    addExchangeBtn () {
+    async addExchangeBtn () {
       if (!this.newExchange) {
         this.$message.error('请输入交易所名称')
         return
@@ -138,8 +145,13 @@ export default {
       if (this.newExchange in this.config.subscribe) {
         this.$message.error('该交易所已经存在')
       }
-      this.addExchange({
-        name: this.newExchange
+      this.$store.dispatchPromise('addExchange', {
+        name: this.newExchange,
+        type: this.newType
+      }).then(() => {
+        this.$nextTick(() => {
+          this.activeExchange = this.newExchange
+        })
       })
     },
     changeSymbols (name, value) {
