@@ -18,18 +18,6 @@ export default new Vuex.Store({
       refresh: 10,
       enable: true,
       subscribe: {
-        binance: {
-          enable: true,
-          type: 0,
-          removeSuffix: true,
-          symbols: []
-        },
-        mexc: {
-          enable: true,
-          type: 0,
-          removeSuffix: true,
-          symbols: ['BTC/USDT', 'ICP/USDT', 'BIT/USDT', 'SWASH/USDT', 'MX/USDT']
-        }
       }
     }
   },
@@ -38,22 +26,23 @@ export default new Vuex.Store({
       // console.log('updateSymbols', name, symbols)
       state.config.subscribe[name].symbols = symbols
     },
-    addExchangeM (state, { name, type, resolve }) {
+    addExchangeM (state, { name, type }) {
       if (name in state.config.subscribe) {
         return
       }
+      console.log('addExchange', name, type)
       const ec = _.cloneDeep(state.defaultExchangeConfig)
       ec.type = type
       state.config.subscribe[name] = ec
-      resolve && resolve()
     },
-    removeExchangeM (state, { name, resolve }) {
+    removeExchangeM (state, { name }) {
       console.log('removeExchangeM', name)
       if (!(name in state.config.subscribe)) {
         return
       }
+      console.log('removeExchangeM del', name)
       delete state.config.subscribe[name]
-      resolve && resolve()
+      console.log(state.config.subscribe)
     },
     switchStatusM (state) {
       state.config.enable = !state.config.enable
@@ -90,12 +79,14 @@ export default new Vuex.Store({
     removeExchange ({ commit }, { name }) {
       console.log('removeExchange', name)
       return new Promise((resolve, reject) => {
-        commit('removeExchangeM', { name, resolve })
+        commit('removeExchangeM', { name })
+        resolve()
       })
     },
     addExchange ({ commit }, { name, type }) {
       return new Promise((resolve, reject) => {
-        commit('addExchangeM', { name, type, resolve })
+        commit('addExchangeM', { name, type })
+        resolve()
       })
     },
     updateSymbols ({ commit }, { name, symbols }) {

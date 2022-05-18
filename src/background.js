@@ -121,7 +121,7 @@ async function updateCoinByExchange () {
           }
         } else {
           const tickers = await exchangeObj.fetchTickers(exchangeConfig.symbols)
-          // console.log(typeof tickers)
+          console.log(exchangeConfig.symbols,tickers)
           for (const tickerName of Object.keys(tickers)) {
             const ticker = tickers[tickerName]
             msgStr.push(`${removeSuffix ? ticker.symbol.split('/')[0] : ticker.symbol} ${ticker.last}`)
